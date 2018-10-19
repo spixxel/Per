@@ -10,6 +10,8 @@ public class ChibiCharacter{
 
     private int hitpoints = 10;
 
+    public int bulletsTargeting = 0;
+
     // Velocity of game character (pixel/millisecond)
     private static final float VELOCITY = 0.1f;
 
@@ -23,9 +25,21 @@ public class ChibiCharacter{
         this.gameSurface= gameSurface;
     }
 
+    public void target()
+    {
+        bulletsTargeting++;
+    }
+
+    public boolean targetable()
+    {
+        if(bulletsTargeting >= hitpoints) return false;
+        return true;
+    }
+
     public boolean hit()
     {
         hitpoints--;
+        bulletsTargeting--;
         if(hitpoints <= 0)
         {
             return false;

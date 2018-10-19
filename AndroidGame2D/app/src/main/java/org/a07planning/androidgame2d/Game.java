@@ -16,6 +16,7 @@ public class Game {
     public final List<ChibiCharacter> chibiList = new ArrayList<ChibiCharacter>();
     public final List<Explosion> explosionList = new ArrayList<Explosion>();
     public final List<Tower> towerList = new ArrayList<>();
+    public final List<Bullet> bulletList = new ArrayList<>();
 
     public final ExplosionFactory explosionFactory;
 
@@ -52,30 +53,52 @@ public class Game {
             ChibiCharacter target = tower.findTarget(chibiList);
             if(target != null)
             {
+                if(tower.shoot(target)) {
+                    Bitmap bitmap = BitmapFactory.decodeResource(res,R.drawable.bullet);
+                    BulletSceneObject bulletSceneObject = new BulletSceneObject(
+                            new Sprite(bitmap, 1, 1),
+                            tower.getX(),
+                            tower.getY(),
+                            tower.getX(),
+                            tower.getY(),
+                            target.getX(),
+                            target.getY());
+                    Bullet bullet = new Bullet(bulletSceneObject, target.sceneObject.id);
+                    graph.root.addGameSceneObject(bulletSceneObject);
+                    bulletList.add(bullet);
+                }
+            }
+        }
 
-                if(tower.shoot() && !target.hit())
-                {
-                    Iterator<ChibiCharacter> enemyIterator= chibiList.iterator();
-                    while(enemyIterator.hasNext()) {
-                        ChibiCharacter chibi = enemyIterator.next();
-                        if(chibi.sceneObject.id == target.sceneObject.id)
-                        {
-                            // Remove the current element from the iterator and the list.
-                            graph.removeObject(chibi.sceneObject.id);
-                            enemyIterator.remove();
-                            // Create Explosion object.
-                            Bitmap bitmap = BitmapFactory.decodeResource(res,explosionResourceId);
-                            ExplosionSceneObject explosionSceneObject = new ExplosionSceneObject(new Sprite(bitmap, 5, 5),chibi.getX(),chibi.getY());
-                            Explosion explosion = explosionFactory.createExplosion(gameSurface, explosionSceneObject);
-                            graph.root.addGameSceneObject(explosionSceneObject);
-                            explosion.start();
-                            explosionList.add(explosion);
+        Iterator<Bullet> bulletIterator= bulletList.iterator();
+        while(bulletIterator.hasNext()) {
+            {
+                Bullet bullet = bulletIterator.next();
+
+                Iterator<ChibiCharacter> enemyIterator = chibiList.iterator();
+                while (enemyIterator.hasNext()) {
+                    ChibiCharacter chibi = enemyIterator.next();
+                    if (chibi.sceneObject.id == bullet.targetId) {
+                        if (bullet.update(chibi.getX(), chibi.getY())) {
+                            bulletIterator.remove();
+                            graph.removeObject(bullet.bulletSceneObject.id);
+                            if (!chibi.hit()) {
+                                // Remove the current element from the iterator and the list.
+                                graph.removeObject(chibi.sceneObject.id);
+                                enemyIterator.remove();
+                                // Create Explosion object.
+                                Bitmap bitmap = BitmapFactory.decodeResource(res, explosionResourceId);
+                                ExplosionSceneObject explosionSceneObject = new ExplosionSceneObject(new Sprite(bitmap, 5, 5), chibi.getX(), chibi.getY());
+                                Explosion explosion = explosionFactory.createExplosion(gameSurface, explosionSceneObject);
+                                graph.root.addGameSceneObject(explosionSceneObject);
+                                explosion.start();
+                                explosionList.add(explosion);
+                            }
                         }
                     }
                 }
             }
         }
-
         for(Tower tower: towerList) {
             tower.update();
         }
@@ -95,7 +118,7 @@ public class Game {
     {
         grid.printGrid();
         if(grid.empty(grid.getXGridCell(x), grid.getYGridCell(y),Tower.gridWidth, Tower.gridHeight)) {
-            Sprite chibiBitmap1 = new Sprite(BitmapFactory.decodeResource(res,R.drawable.chibi1), 4, 3);
+            Sprite chibiBitmap1 = new Sprite(BitmapFactory.decodeResource(res,R.drawable.tower), 4, 3);
             TowerSceneObject chibiSprite1 = new TowerSceneObject(chibiBitmap1,grid.getXSnapGrid(x),grid.getYSnapGrid(y));
             graph.root.addGameSceneObject(chibiSprite1);
             Tower chibi1 = new Tower(gameSurface,chibiSprite1);

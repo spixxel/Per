@@ -27,13 +27,14 @@ public class Tower{
     }
 
     boolean animationOngoing = false;
-    
-    public boolean shoot()
+
+    public boolean shoot(ChibiCharacter target)
     {
         if(cooldown == 20)
         {
             animationOngoing = true;
             cooldown = 0;
+            target.target();
             return true;
         }
         return false;
@@ -44,7 +45,7 @@ public class Tower{
         for(ChibiCharacter enemy: enemies)
         {
             if((Math.abs(sceneObject.getX() - enemy.sceneObject.getX())+
-                    Math.abs(sceneObject.getY() - enemy.sceneObject.getY())) < 500)
+                    Math.abs(sceneObject.getY() - enemy.sceneObject.getY())) < 500 && enemy.targetable())
             {
                 return enemy;
             }

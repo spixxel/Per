@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.a07planning.androidgame2d">
-
+    <uses-feature android:name="android.hardware.screen.landscape"/>
     <application
         android:screenOrientation="landscape"
         android:allowBackup="true"
