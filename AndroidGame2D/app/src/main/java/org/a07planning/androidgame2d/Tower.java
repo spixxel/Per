@@ -27,8 +27,7 @@ public class Tower{
     }
 
     boolean animationOngoing = false;
-
-
+    
     public boolean shoot()
     {
         if(cooldown == 20)
