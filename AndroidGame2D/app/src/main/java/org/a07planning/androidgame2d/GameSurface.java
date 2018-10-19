@@ -104,12 +104,32 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            game.spawnTower((int)event.getX(), (int)event.getY(), this, scenegraph);
+
             game.changeEnemyDirection((int)event.getX(), (int)event.getY());
+            //game.spawnEnemy((int)event.getX(), (int)event.getY(), this, scenegraph);
             return true;
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            //game.spawnEnemy((int)event.getX(), (int)event.getY(), this, scenegraph);
+            game.spawnTower((int)event.getX(), (int)event.getY(), this, scenegraph);
+            game.buildTowerAccept.sceneObject.hidden = true;
+            game.buildTowerDecline.sceneObject.hidden = true;
+            return true;
+        }
+        if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            if(game.grid.empty(
+                    game.grid.getXGridCell((int)event.getX()),
+                    game.grid.getYGridCell((int)event.getY()),
+                    Tower.gridWidth,
+                    Tower.gridHeight))
+            {
+                game.buildTowerAccept.sceneObject.hidden = false;
+                game.buildTowerDecline.sceneObject.hidden = true;
+            }
+            else {
+                game.buildTowerAccept.sceneObject.hidden = true;
+                game.buildTowerDecline.sceneObject.hidden = false;
+            }
+            game.moveBuildtower((int)event.getX(), (int)event.getY());
             return true;
         }
         return false;

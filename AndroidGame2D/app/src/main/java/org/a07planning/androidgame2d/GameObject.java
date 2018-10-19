@@ -6,6 +6,7 @@
 
     public abstract class GameObject {
 
+        public boolean hidden = false;
         public static int nextId = 1;
 
         protected Sprite sprite;

@@ -12,7 +12,7 @@ public class GameFactory {
     }
     Game createGame(GameSurface gameSurface, Scenegraph graph)
     {
-        Game game = new Game(new ExplosionFactory(res), res, R.drawable.explosion, gameSurface);
+        Game game = new Game(new ExplosionFactory(res), res, R.drawable.explosion, gameSurface, graph);
         Sprite chibiBitmap1 = new Sprite(BitmapFactory.decodeResource(res,R.drawable.chibi1), 4,3);
         ChibiCharacterSceneObject chibiSprite1 = new ChibiCharacterSceneObject(chibiBitmap1,100,50);
         ChibiCharacterSceneObject chibiSpriteb = new ChibiCharacterSceneObject(chibiBitmap1,200,50);

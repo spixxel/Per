@@ -28,7 +28,8 @@ public class TowerSceneObject extends GameObject {
 
     @Override
     public void draw(Canvas canvas)  {
-        canvas.drawBitmap(sprite.getFrame(rowIndex, colIndex), x, y,null);
+        if(!hidden)
+            canvas.drawBitmap(sprite.getFrame(rowIndex, colIndex), x, y,null);
     }
 
     public boolean isInside(int x, int y)
