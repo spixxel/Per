@@ -1,8 +1,13 @@
 package org.a07planning.androidgame2d;
 
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class Grid {
 
@@ -14,18 +19,30 @@ public class Grid {
 
     int[][] occupied;
 
-    public Grid(int width, int height)
+    public Grid(int width, int height, Resources res)
     {
-        gridWidth = width;
-        gridHeight = height;
-        occupied = new int[width][height];
-        for(int i = 0; i < width; i++)
-        {
-            for(int j = 0; j < height; j++)
+        InputStream is = res.openRawResource(R.raw.gridterrain);
+        try {
+            String s = IOUtils.toString(is);
+
+            String lines[] = s.split(System.getProperty("line.separator"));
+
+            gridWidth = width;
+            gridHeight = height;
+            occupied = new int[width][height];
+            for(int i = 0; i < width; i++)
             {
-                occupied[i][j] = -1;
+                String[] cellValue = lines[i].split(" ");
+                for(int j = 0; j < height; j++)
+                {
+                    occupied[i][j] = Integer.parseInt(cellValue[j]);
+                }
             }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        IOUtils.closeQuietly(is); // don't forget to close your streams
     }
 
     public int getXGridCell(int screenX) {
@@ -45,8 +62,21 @@ public class Grid {
     }
 
     public boolean empty(int x, int y, int width, int height) {
-        if(x+width >= gridWidth ) return false;
-        if(y+height >= gridHeight ) return false;
+        if(x+width > gridWidth ) return false;
+        if(y+height > gridHeight ) return false;
+        for(int i = x; i < x+width; i++) {
+            for(int j = y; j < y+height; j++) {
+                if(occupied[i][j] != 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean road(int x, int y, int width, int height) {
+        if(x+width > gridWidth ) return false;
+        if(y+height > gridHeight ) return false;
         for(int i = x; i < x+width; i++) {
             for(int j = y; j < y+height; j++) {
                 if(occupied[i][j] != -1) {
@@ -76,7 +106,7 @@ public class Grid {
         for(int i = 0; i < gridWidth; i++) {
             for(int j = 0; j < gridHeight; j++) {
                 if(occupied[i][j] == id) {
-                    occupied[i][j] = -1;
+                    occupied[i][j] = 0;
                 }
             }
         }

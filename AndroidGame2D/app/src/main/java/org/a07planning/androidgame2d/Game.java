@@ -18,6 +18,8 @@ public class Game {
     public final List<Tower> towerList = new ArrayList<>();
     public final List<Bullet> bulletList = new ArrayList<>();
 
+    public final Bitmap background;
+
     public Tower buildTowerAccept;
     public Tower buildTowerDecline;
 
@@ -25,14 +27,18 @@ public class Game {
 
     public final Grid grid;
 
+    public BitmapFactory.Options o = new BitmapFactory.Options();
+
+
     public Game(ExplosionFactory explosionFactory, Resources res, int explosionResourceId, GameSurface gameSurface, Scenegraph graph)
     {
+        o.inScaled = false;
         this.explosionResourceId = explosionResourceId;
         this.res = res;
         this.explosionFactory = explosionFactory;
-        grid = new Grid(gameSurface.getWidth()/Grid.cellWidth, gameSurface.getHeight()/Grid.cellHeight);
-        Sprite towerAcceptBitmap = new Sprite(BitmapFactory.decodeResource(res,R.drawable.buildtoweraccept), 4, 3);
-        Sprite towerDeclineBitmap = new Sprite(BitmapFactory.decodeResource(res,R.drawable.buildtowerdecline), 4, 3);
+        grid = new Grid(gameSurface.getWidth()/Grid.cellWidth, gameSurface.getHeight()/Grid.cellHeight, res);
+        Sprite towerAcceptBitmap = new Sprite(BitmapFactory.decodeResource(res,R.drawable.buildtoweraccept, o), 4, 3);
+        Sprite towerDeclineBitmap = new Sprite(BitmapFactory.decodeResource(res,R.drawable.buildtowerdecline, o), 4, 3);
 
         TowerSceneObject towerSceneObjectAccept = new TowerSceneObject(towerAcceptBitmap,grid.getXSnapGrid(0),grid.getYSnapGrid(0));
         graph.root.addGameSceneObject(towerSceneObjectAccept);
@@ -43,11 +49,23 @@ public class Game {
         graph.root.addGameSceneObject(towerSceneObjectDecline);
         buildTowerDecline = new Tower(gameSurface,towerSceneObjectDecline);
         buildTowerDecline.sceneObject.hidden = true;
+
+
+        background = BitmapFactory.decodeResource(res,R.drawable.background, o);
     }
 
 
+    int timer = 1000;
+
     public void gameLoop(int deltaTime, Scenegraph graph, GameSurface gameSurface)
     {
+        timer += deltaTime;
+        if(timer > 1000) {
+            spawnEnemy(0,0,gameSurface,graph);
+            timer = 0;
+        }
+        //game.changeEnemyDirection((int)event.getX(), (int)event.getY());
+        //game.spawnEnemy((int)event.getX(), (int)event.getY(), this, scenegraph);
         moveMobs(deltaTime);
         animateExplosions(graph);
         towersShoot(graph);
@@ -64,10 +82,10 @@ public class Game {
 
     void spawnEnemy(int x, int y, GameSurface gameSurface, Scenegraph graph)
     {
-        Sprite chibiBitmap1 = new Sprite(BitmapFactory.decodeResource(res,R.drawable.chibi1), 4, 3);
+        Sprite chibiBitmap1 = new Sprite(BitmapFactory.decodeResource(res,R.drawable.chibi1, o), 4, 3);
         ChibiCharacterSceneObject chibiSprite1 = new ChibiCharacterSceneObject(chibiBitmap1,x,y);
         graph.root.addGameSceneObject(chibiSprite1);
-        ChibiCharacter chibi1 = new ChibiCharacter(gameSurface,chibiSprite1);
+        ChibiCharacter chibi1 = new ChibiCharacter(gameSurface,chibiSprite1, grid);
         chibiList.add(chibi1);
     }
 
@@ -119,7 +137,7 @@ public class Game {
                                 graph.removeObject(chibi.sceneObject.id);
                                 enemyIterator.remove();
                                 // Create Explosion object.
-                                Bitmap bitmap = BitmapFactory.decodeResource(res, explosionResourceId);
+                                Bitmap bitmap = BitmapFactory.decodeResource(res, explosionResourceId, o);
                                 ExplosionSceneObject explosionSceneObject = new ExplosionSceneObject(new Sprite(bitmap, 5, 5), chibi.getX(), chibi.getY());
                                 Explosion explosion = explosionFactory.createExplosion(gameSurface, explosionSceneObject);
                                 graph.root.addGameSceneObject(explosionSceneObject);
@@ -140,7 +158,7 @@ public class Game {
             if(target != null)
             {
                 if(tower.shoot(target)) {
-                    Bitmap bitmap = BitmapFactory.decodeResource(res,R.drawable.bullet);
+                    Bitmap bitmap = BitmapFactory.decodeResource(res,R.drawable.bullet, o);
                     BulletSceneObject bulletSceneObject = new BulletSceneObject(
                             new Sprite(bitmap, 1, 1),
                             tower.getX(),
@@ -160,7 +178,7 @@ public class Game {
     void spawnTower(int x, int y, GameSurface gameSurface, Scenegraph graph)
     {
         if(grid.empty(grid.getXGridCell(x), grid.getYGridCell(y),Tower.gridWidth, Tower.gridHeight)) {
-            Sprite towerBitmap = new Sprite(BitmapFactory.decodeResource(res,R.drawable.tower), 4, 3);
+            Sprite towerBitmap = new Sprite(BitmapFactory.decodeResource(res,R.drawable.tower, o), 4, 3);
             TowerSceneObject towerSceneObject = new TowerSceneObject(towerBitmap,grid.getXSnapGrid(x),grid.getYSnapGrid(y));
             graph.root.addGameSceneObject(towerSceneObject);
             Tower tower = new Tower(gameSurface,towerSceneObject);
@@ -169,12 +187,12 @@ public class Game {
         }
     }
 
-    void changeEnemyDirection(int x, int y)
+    /*void changeEnemyDirection(int x, int y)
     {
         for(ChibiCharacter chibi: chibiList) {
             int movingVectorX = x - chibi.getX() ;
             int movingVectorY = y - chibi.getY() ;
             chibi.setMovingVector(movingVectorX, movingVectorY);
         }
-    }
+    }*/
 }

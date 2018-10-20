@@ -12,7 +12,7 @@ public class Explosion {
 
     public void start()
     {
-        this.gameSurface.playSoundExplosion();
+        //this.gameSurface.playSoundExplosion();
     }
 
     public boolean update()  {

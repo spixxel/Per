@@ -78,7 +78,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
                 soundPoolLoaded = true;
 
                 // Playing background sound.
-                playSoundBackground();
+                //playSoundBackground();
             }
         });
     }
@@ -104,9 +104,6 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
-            game.changeEnemyDirection((int)event.getX(), (int)event.getY());
-            //game.spawnEnemy((int)event.getX(), (int)event.getY(), this, scenegraph);
             return true;
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -153,8 +150,9 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void draw(Canvas canvas)  {
         super.draw(canvas);
-        scenegraph.draw(canvas);
+        canvas.drawBitmap(game.background,0, 0, null);
         game.grid.renderGrid(canvas);
+        scenegraph.draw(canvas);
     }
 
     // Implements method of SurfaceHolder.Callback

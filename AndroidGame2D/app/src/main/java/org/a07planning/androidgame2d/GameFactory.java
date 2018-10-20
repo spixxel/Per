@@ -13,7 +13,7 @@ public class GameFactory {
     Game createGame(GameSurface gameSurface, Scenegraph graph)
     {
         Game game = new Game(new ExplosionFactory(res), res, R.drawable.explosion, gameSurface, graph);
-        Sprite chibiBitmap1 = new Sprite(BitmapFactory.decodeResource(res,R.drawable.chibi1), 4,3);
+        /*Sprite chibiBitmap1 = new Sprite(BitmapFactory.decodeResource(res,R.drawable.chibi1), 4,3);
         ChibiCharacterSceneObject chibiSprite1 = new ChibiCharacterSceneObject(chibiBitmap1,100,50);
         ChibiCharacterSceneObject chibiSpriteb = new ChibiCharacterSceneObject(chibiBitmap1,200,50);
         ChibiCharacterSceneObject chibiSpritec = new ChibiCharacterSceneObject(chibiBitmap1,300,50);
@@ -36,7 +36,7 @@ public class GameFactory {
         game.chibiList.add(chibib);
         game.chibiList.add(chibic);
         game.chibiList.add(chibid);
-        game.chibiList.add(chibi2);
+        game.chibiList.add(chibi2);*/
 
         return game;
     }
