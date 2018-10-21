@@ -3,7 +3,7 @@ package org.a07planning.androidgame2d;
 import android.graphics.Bitmap;
 
 public class Sprite {
-    private Bitmap image;
+    public Bitmap image;
 
     private Bitmap[][] frames;
 

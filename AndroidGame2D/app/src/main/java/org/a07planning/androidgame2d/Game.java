@@ -36,7 +36,7 @@ public class Game {
         this.explosionResourceId = explosionResourceId;
         this.res = res;
         this.explosionFactory = explosionFactory;
-        grid = new Grid(gameSurface.getWidth()/Grid.cellWidth, gameSurface.getHeight()/Grid.cellHeight, res);
+        grid = new Grid(27, 36, res);
         Sprite towerAcceptBitmap = new Sprite(BitmapFactory.decodeResource(res,R.drawable.buildtoweraccept, o), 4, 3);
         Sprite towerDeclineBitmap = new Sprite(BitmapFactory.decodeResource(res,R.drawable.buildtowerdecline, o), 4, 3);
 
@@ -50,23 +50,22 @@ public class Game {
         buildTowerDecline = new Tower(gameSurface,towerSceneObjectDecline);
         buildTowerDecline.sceneObject.hidden = true;
 
-
         background = BitmapFactory.decodeResource(res,R.drawable.background, o);
     }
 
 
-    int timer = 1000;
+    int timer = 0;
 
     public void gameLoop(int deltaTime, Scenegraph graph, GameSurface gameSurface)
     {
         timer += deltaTime;
-        if(timer > 1000) {
+        if(timer > 10) {
             spawnEnemy(0,0,gameSurface,graph);
             timer = 0;
         }
         //game.changeEnemyDirection((int)event.getX(), (int)event.getY());
         //game.spawnEnemy((int)event.getX(), (int)event.getY(), this, scenegraph);
-        moveMobs(deltaTime);
+        moveMobs(deltaTime, graph);
         animateExplosions(graph);
         towersShoot(graph);
         moveBullets(graph, gameSurface);
@@ -89,10 +88,16 @@ public class Game {
         chibiList.add(chibi1);
     }
 
-    void moveMobs(int deltaTime)
+    void moveMobs(int deltaTime, Scenegraph graph)
     {
-        for(ChibiCharacter chibi: chibiList) {
-            chibi.move(deltaTime);
+        Iterator<ChibiCharacter> enemyIterator = chibiList.iterator();
+        while (enemyIterator.hasNext()) {
+            ChibiCharacter chibi = enemyIterator.next();
+            if(!chibi.move(deltaTime)) {
+                graph.removeObject(chibi.sceneObject.id);
+                enemyIterator.remove();
+            }
+
         }
     }
 

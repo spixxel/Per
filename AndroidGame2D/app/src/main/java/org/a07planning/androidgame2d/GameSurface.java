@@ -19,7 +19,7 @@ import java.util.List;
 public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
     private GameThread gameThread;
-    private Game game;
+    public Game game;
     private Scenegraph scenegraph = new Scenegraph();
     private GameFactory gameFactory = new GameFactory(getResources());
     private static final int MAX_STREAMS=100;
@@ -101,32 +101,43 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    boolean building = false;
+
+    public void requestTowerBuild() {
+        building=true;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             return true;
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            game.spawnTower((int)event.getX(), (int)event.getY(), this, scenegraph);
-            game.buildTowerAccept.sceneObject.hidden = true;
-            game.buildTowerDecline.sceneObject.hidden = true;
+            if(building) {
+                game.spawnTower((int)event.getRawX(), (int)event.getRawY(), this, scenegraph);
+                game.buildTowerAccept.sceneObject.hidden = true;
+                game.buildTowerDecline.sceneObject.hidden = true;
+                building = false;
+            }
             return true;
         }
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            if(game.grid.empty(
-                    game.grid.getXGridCell((int)event.getX()),
-                    game.grid.getYGridCell((int)event.getY()),
-                    Tower.gridWidth,
-                    Tower.gridHeight))
-            {
-                game.buildTowerAccept.sceneObject.hidden = false;
-                game.buildTowerDecline.sceneObject.hidden = true;
+            if(building) {
+                if(game.grid.empty(
+                        game.grid.getXGridCell((int)event.getRawX()),
+                        game.grid.getYGridCell((int)event.getRawY()),
+                        Tower.gridWidth,
+                        Tower.gridHeight))
+                {
+                    game.buildTowerAccept.sceneObject.hidden = false;
+                    game.buildTowerDecline.sceneObject.hidden = true;
+                }
+                else {
+                    game.buildTowerAccept.sceneObject.hidden = true;
+                    game.buildTowerDecline.sceneObject.hidden = false;
+                }
+                game.moveBuildtower((int)event.getRawX(), (int)event.getRawY());
             }
-            else {
-                game.buildTowerAccept.sceneObject.hidden = true;
-                game.buildTowerDecline.sceneObject.hidden = false;
-            }
-            game.moveBuildtower((int)event.getX(), (int)event.getY());
             return true;
         }
         return false;

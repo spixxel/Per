@@ -15,7 +15,7 @@ public class ChibiCharacter{
     public int bulletsTargeting = 0;
 
     // Velocity of game character (pixel/millisecond)
-    private static final float VELOCITY = 0.1f;
+    private static final float VELOCITY = 1.0f;
 
     private int movingVectorX = 10;
     private int movingVectorY = 5;
@@ -33,9 +33,7 @@ public class ChibiCharacter{
         this.sceneObject = sceneObject;
         this.gameSurface= gameSurface;
         this.grid = grid;
-        //initPath
-        path = pathfinder.findPath(new Coordinate(0,0), new Coordinate(0,43), grid);
-        int apa = 0;
+        path = pathfinder.findPath(new Coordinate(0,0), new Coordinate(26,35), grid);
     }
 
     public void target()
@@ -60,7 +58,7 @@ public class ChibiCharacter{
         return true;
     }
 
-    public void move(int deltaTime)  {
+    public boolean move(int deltaTime)  {
         sceneObject.animate();
         // Distance moves
         float distance = VELOCITY * deltaTime;
@@ -72,7 +70,7 @@ public class ChibiCharacter{
         {
             pathDistance++;
             if(pathDistance == path.size()){
-                pathDistance = 0;
+                return false;
             }
         }
         if(grid.getXGridCell(getX()) < path.get(pathDistance).x) {
@@ -101,6 +99,7 @@ public class ChibiCharacter{
                 (int)(distance* movingVectorY / movingVectorLength),
                 this.gameSurface.getWidth(),
                 this.gameSurface.getHeight());
+        return true;
     }
 
     //public void setMovingVector(int movingVectorX, int movingVectorY)  {
